@@ -39,17 +39,32 @@ A modern e-commerce application built with React, Node.js, and Express, featurin
 
 2. **Install dependencies**
    ```bash
-   npm run install-all
+   npm install
+   cd server && npm install
+   cd ../client && npm install
    ```
 
-3. **Start the development servers**
+3. **Initialize the database**
    ```bash
+   cd server
+   npm run init-db
+   ```
+
+4. **Start the development servers**
+   ```bash
+   # From root directory
    npm run dev
    ```
 
-4. **Open your browser**
+5. **Open your browser**
    - Frontend: http://localhost:3000
    - Backend API: http://localhost:5000
+
+## Setup & Configuration
+
+- See [`setup.md`](./setup.md) for advanced setup, environment variables, and troubleshooting.
+- The `.gitignore` file is configured to exclude dependencies, build output, logs, environment files, database files, IDE settings, and more for both client and server. This helps keep your repository clean and secure.
+- Create a `.env` file in the `server` directory for backend configuration (see `setup.md` for details).
 
 ## Project Structure
 
@@ -105,4 +120,4 @@ wwalmart/
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details. # Sparkathon
+This project is licensed under the MIT License - see the LICENSE file for details.
