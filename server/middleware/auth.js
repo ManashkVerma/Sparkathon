@@ -1,0 +1,53 @@
+const jwt = require('jsonwebtoken');
+const database = require('../utils/database');
+
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+
+const auth = async (req, res, next) => {
+  try {
+    const token = req.header('Authorization')?.replace('Bearer ', '');
+    
+    if (!token) {
+      return res.status(401).json({ error: 'Access denied. No token provided.' });
+    }
+
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const user = await database.get('SELECT * FROM users WHERE id = ?', [decoded.userId]);
+    
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid token. User not found.' });
+    }
+
+    req.user = user;
+    next();
+  } catch (error) {
+    if (error.name === 'JsonWebTokenError') {
+      return res.status(401).json({ error: 'Invalid token.' });
+    }
+    if (error.name === 'TokenExpiredError') {
+      return res.status(401).json({ error: 'Token expired.' });
+    }
+    res.status(500).json({ error: 'Server error.' });
+  }
+};
+
+const optionalAuth = async (req, res, next) => {
+  try {
+    const token = req.header('Authorization')?.replace('Bearer ', '');
+    
+    if (token) {
+      const decoded = jwt.verify(token, JWT_SECRET);
+      const user = await database.get('SELECT * FROM users WHERE id = ?', [decoded.userId]);
+      if (user) {
+        req.user = user;
+      }
+    }
+    
+    next();
+  } catch (error) {
+    // Continue without authentication for optional routes
+    next();
+  }
+};
+
+module.exports = { auth, optionalAuth }; 
